@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="www.silver.dao.IF_TravelFoodDAO">
+	<insert id="insert" parameterType="www.silver.vo.TravelFoodVO">
+		insert into travelFood
+		values(tf_cnt.nextval, #{username}, #{place}, #{restaurant},
+		#{review}, default, 0)
+	</insert>
+	<select id="select" resultType="www.silver.vo.TravelFoodVO">
+		select t.* from (select sub.*,
+		rownum as rnum from (select * from
+		travelFood order by no DESC) sub) t
+		where
+		rnum between #{startNo} and #{endNo}
+	</select>
+	<select id="getTotalCount" resultType="int">
+		select count(*) from
+		travelFood
+	</select>
+	<select id="getTotalCountSearch" resultType="int">
+		select count(*) from
+		travelFood where place like
+		'%'||#{searchKeyword}||'%'
+	</select>
+	<delete id="delete" parameterType="www.silver.vo.TravelFoodVO">
+		delete from travelFood where
+		no = #{no}
+	</delete>
+	<delete id="deleteC" parameterType="www.silver.vo.TravelFoodVO">
+		delete from tf_comment where
+		no = #{no}
+	</delete>
+	<update id="update" parameterType="www.silver.vo.TravelFoodVO">
+		update travelFood set
+		review=#{review} where no=#{no}
+	</update>
+	<select id="search" resultType="www.silver.vo.PageVO">
+		select t.* from (select sub.*,
+		rownum as rnum from (select *
+		from
+		travelFood where place like
+		'%'||#{searchKeyword}||'%' order by no DESC) sub) t
+		where
+		rnum between
+		#{startNo}
+		and #{endNo}
+	</select>
+	<select id="detail" resultType="www.silver.vo.TravelFoodVO">
+		select * from travelFood where no=#{no}
+	</select>
+	<insert id="insertC" parameterType="www.silver.vo.tf_commentVO">
+		insert into tf_comment
+		values(#{no}, #{tf_comment}, #{c_user})
+	</insert>
+	<select id="selectC" parameterType="www.silver.vo.tf_commentVO"
+		resultType="www.silver.vo.tf_commentVO">
+		select * from tf_comment where no=#{no}
+	</select>
+	<update id="updateL" parameterType="www.silver.vo.TravelFoodVO">
+		update travelFood set
+		likes=likes +1 where no=#{no}
+	</update>
+	<select id="selectAllC"
+		parameterType="www.silver.vo.tf_commentVO"
+		resultType="www.silver.vo.tf_commentVO">
+		select * from tf_comment
+	</select>
+	<insert id="saveFile" parameterType="String">
+		insert into tf_attach values
+		((select max(no) from travelFood), #{filename})
+	</insert>
+	<select id="selectAll" resultType="www.silver.vo.TravelFoodVO">
+		select * from travelFood
+	</select>
+	<select id="getFiles" resultType="String">
+		select filename from tf_attach where no = #{no}
+	</select>
+	<insert id="signin" parameterType="www.silver.vo.MemberVO">
+		insert into member values(#{id}, #{pass}, #{name})
+	</insert>
+</mapper>
